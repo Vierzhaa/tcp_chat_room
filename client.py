@@ -56,6 +56,7 @@ def write():
                 client.close()
                 print("keluar dari chat")
                 break
+
             elif m == "/cls":
                 clear()
                 continue
