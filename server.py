@@ -1,4 +1,4 @@
-import socket, threading, os, ast
+import socket, threading, os, ast, time
 
 FILE_NAME = "banlist.txt"
 enc='utf-8'
@@ -82,7 +82,7 @@ def kick(nickname,s):
         if s == "k":
             client.send("you were kicked".encode(enc))
             broadcast(f"{nickname} was kicked by the great admin".encode(enc))
-        else:
+        elif s == "b":
             client.send("you were banned".encode(enc))
             broadcast(f"{nickname} was kicked and banned by the great admin".encode(enc))
         client.close()
@@ -105,10 +105,16 @@ def server_commands():
             for client in clients:
                 client.send("SERVER_SHUTDOWN".encode(enc))
                 client.close()
+
+            time.sleep(0.5)
+            if nicknames:
+                time.sleep(0.5)
+                if nicknames:
+                    kick(nicknames[0],"s")
             server.close()
 
             print("server closed")
-            os._exit(0)
+            #os._exit(0)
             break
         elif "/kick" in cmd:
             cmd = cmd.replace(" ","")
@@ -145,10 +151,24 @@ def server_commands():
                 print("no user was banned")
         elif "/ms" in cmd:
             mes=cmd[4:]
-            broadcast(f"{mes}".encode(enc))
+            print(f"admin: {mes}")
+            broadcast(f"admin: {mes}".encode(enc))
+        elif cmd == "/brcl":
+            if nicknames:
+                print("  (admin)\nclient list\n- "+"\n- ".join(nicknames))
+                broadcast("  (admin)\nclient list\n- ".encode(enc)+"\n- ".join(nicknames).encode(enc))
+            else:
+                print("none")
+        elif cmd == "/brbl":
+            if banlist:
+                print("  (admin)\nban list\n- "+"\n- ".join(banlist))
+                broadcast("  (admin)\nban list\n- ".encode(enc)+"\n- ".join(banlist).encode(enc))
+            else:
+                print("none")
         elif cmd == "/help" or cmd == "/h":
             print("/clients -> client lists\n/blist -> ban list\n/ms (message) -> send message")
             print("/kick (name) -> kick client\n/ban (name) -> ban client\n/unban (name) -> unband client")
+            print("/brcl -> broadcast client list\n/brbl -> broadcast ban list")
             print("/cls -> clear screen\n/shutdown or /s -> close server\n/help or /h -> help")
         else:
             print("command unknown")
@@ -156,4 +176,3 @@ def server_commands():
 thread_cmd = threading.Thread(target=server_commands)
 thread_cmd.start()
 receive()
-
