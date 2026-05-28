@@ -238,12 +238,8 @@ def server_commands():
                 print("file sent successfully")
             else:
                 print("failed — user or file not found")
-
-        # ── clear ─────────────────────────────────────────────────────────────
         elif cmd == '/cls':
             clear()
-
-        # ── help ──────────────────────────────────────────────────────────────
         elif cmd in ('/help', '/h'):
             print("""  /clients          — list connected clients
   /blist            — list banned users
